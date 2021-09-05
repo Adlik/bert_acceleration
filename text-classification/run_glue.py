@@ -448,22 +448,11 @@ def main():
         data_collator = None
 
     # NOTE zsh begin
-    quantized_model = torch.quantization.quantize_dynamic(
-    model, {torch.nn.Linear}, dtype=torch.qint8
-    )
-    trainer = Trainer(
-        model=quantized_model,
-        args=training_args,
-        train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=eval_dataset if training_args.do_eval else None,
-        compute_metrics=compute_metrics,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-    )
-    # NOTE zsh end
-    # Initialize our Trainer
+    # quantized_model = torch.quantization.quantize_dynamic(
+    #     model, {torch.nn.Linear}, dtype=torch.qint8
+    # )
     # trainer = Trainer(
-    #     model=model,
+    #     model=quantized_model,
     #     args=training_args,
     #     train_dataset=train_dataset if training_args.do_train else None,
     #     eval_dataset=eval_dataset if training_args.do_eval else None,
@@ -471,6 +460,17 @@ def main():
     #     tokenizer=tokenizer,
     #     data_collator=data_collator,
     # )
+    # NOTE zsh end
+    # Initialize our Trainer
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset if training_args.do_train else None,
+        eval_dataset=eval_dataset if training_args.do_eval else None,
+        compute_metrics=compute_metrics,
+        tokenizer=tokenizer,
+        data_collator=data_collator,
+    )
     # Initialize our Trainer
 
     # Training

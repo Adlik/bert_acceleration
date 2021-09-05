@@ -1,4 +1,4 @@
-# coding=utf-8
+f# coding=utf-8
 # Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
 # Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
 #
@@ -305,7 +305,12 @@ class BertSelfAttention(nn.Module):
         # NOTE gzy add for fbgemm
         # from .accerlate_mm import Matmul_
         # attention_scores = Matmul_(query_layer.contiguous(), key_layer.transpose(-1, -2).contiguous())
-        # gzy end
+        # NOTE gzy end
+
+        # NOTE zsh add for quantized topk
+        # from .customized_attn import matmul_customized, matmul_customized_with_topk
+        # attention_scores = matmul_topk(query_layer, key_layer.transpose(-1, -2), k=8, mask=attention_mask, head_size=self.attention_head_size)
+        # NOTE zsh end
         
         attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
 

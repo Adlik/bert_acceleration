@@ -2,23 +2,25 @@ import torch
 import math
 from .quantized_matmul import quantize
 
-def matmul_topk(A, B, k, mask):
-    if k >= B.shape[-1]: # k too large
-        print("k too large")
-        return torch.matmul(A, B)
-
-    prod = torch.matmul(A, B)
+def matmul_topk(A, B, k, mask, head_size):
+    QA, _= quantize(A)
+    QB, _= quantize(B)
+    Qprod = torch.matmul(QA, QB)
 
     if mask is not None:
-        prod = prod + mask
-    _, idx = torch.topk(prod, k)
+        Qprod = Qprod + mask * 10000
 
+    _, idx = torch.topk(Qprod, k)
+
+    prod = torch.matmul(A, B)
     val = prod.gather(dim=-1, index=idx)
 
-    out = torch.full_like(prod, float('-inf'))
-    out.scatter_(dim=-1, index=idx, src=val)
+    scores = torch.full_like(prod, 0.)
+    scores.scatter_(src=val, index=idx, dim=-1)
+    scores = scores / math.sqrt(head_size)
+    scores[scores == 0.] = -10000.
 
-    return out
+    return scores
 
 def matmul_local(A, B, r, mask, head_size):
     '''

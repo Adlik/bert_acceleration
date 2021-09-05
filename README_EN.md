@@ -14,7 +14,7 @@ The **text-classification** folder contains the program code for testing. We hav
 
 
 
-#### Download Pretrained BERT Model
+### Download Pretrained BERT Model
 
 Download pretrianed bert models from Google Drive: 
 
@@ -26,7 +26,7 @@ These nine pre-trained models are fine-tuned for different downstream tasks usin
 
 
 
-#### Test Task 
+### Test Task 
 
 A specific description of the nine text classification tasks performed based on the GLUE dataset is shown in the table below.
 
@@ -34,7 +34,7 @@ A specific description of the nine text classification tasks performed based on 
 
 
 
-#### Acceleration using pytorch dynamic quantization API
+### Acceleration using pytorch dynamic quantization API
 
 Dynamic quantization refers to pre-quantizing the model weights and dynamically quantizing the activation functions at runtime. This quantization mechanism is applicable to LSTM and Transformer-like models. To run this step, first comment out lines 465-473 of run_glue.py, uncomment lines 451-462, and then run it in the **text-classification/** directory: 
 
@@ -65,7 +65,7 @@ quantized_model = torch.quantization.quantize_dynamic(
 
 
 
-#### Accelerate Matrix Multiplication with FBGEMM
+### Accelerate Matrix Multiplication with FBGEMM
 
 This section attempts to use **fbgemm** to speed up the computation of Matrix Multiplication in the attention computation process.
 
@@ -104,7 +104,7 @@ python run_glue.py \
 
 
 
-#### Accelerate Attention Computation with Explicit Pattern and Fake Quantization
+### Accelerate Attention Computation with Explicit Pattern and Fake Quantization
 
 Here we use low-precision matrix multiplication to compute the attention matrix and select the top-k elements of each row, and then perform a high-precision computation of the attention matrix at a specific location in order to achieve a speedup of the attention computation without much loss of precision. Currently, we use pseudo-quantization to simulate the process of computing the attention matrix with low precision. To run this step, first comment out modeling_bert.py lines 315-333, uncomment lines 311-312, and then run it in the text-classification directory:
 
@@ -123,7 +123,7 @@ python run_glue.py \
   --output_dir /tmp/$TASK_NAME/
 ```
 
-###### Explicit Pattern Selected
+#### Explicit Pattern Selected
 
 The step of accelerated computation is to perform a sparse operation before the matrix multiplication of query and key, i.e., for each query, only the k most similar keys are selected to compute the result of matrix multiplication, and the other positions are ignored, as shown in Fig.
 
@@ -141,7 +141,7 @@ We combine the thresholds of each row in series to form a vector $t = [t1, t2, .
 
 This explicit choice of the first k most relevant keys not only preserves the important information, but also simplifies the model, since the hyperparameter k are taken to be smaller values, such as 4, 8, 16, etc. The selection of the first k large elements is followed by the normalization operation of $Softmax$. Since the positions smaller than the k-th maximum are masked (mask) by the function M(-, -) to negative infinity, their normalized weight values, i.e., the probability of similarity, are approximately 0.
 
-###### 		With Fake-Quantization 
+#### 		With Fake-Quantization 
 
 Further adding quantization operations to the computational basis of sparse computation to
 expect to further improve the efficiency of the model computation. 

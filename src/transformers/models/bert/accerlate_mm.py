@@ -3,7 +3,7 @@ import ctypes
 import numpy as np
 
 def Matmul_(A, B):
-	matmul_lib = ctypes.cdll.LoadLibrary("/home/yxj/zsh/transformers/examples/text-classification/accerlate_mm/libmm.so")
+	matmul_lib = ctypes.cdll.LoadLibrary("../accelerate_mm/libmm.so")
 	A_shape = A.shape
 	B_shape = B.shape
 	m = A_shape[2]

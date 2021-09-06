@@ -32,7 +32,7 @@ These nine pre-trained models are fine-tuned for different downstream tasks usin
 
 A specific description of the nine text classification tasks performed based on the GLUE dataset is shown in the table below.
 
-![1](C:\Users\lenovo\Desktop\bert_acceleration\figs\1.png)
+![1](./figs/1.png)
 
 
 
@@ -126,7 +126,7 @@ python run_glue.py \
 
 The step of accelerated computation is to perform a sparse operation before the matrix multiplication of query and key, i.e., for each query, only the k most similar keys are selected to compute the result of matrix multiplication, and the other positions are ignored, as shown in Fig.
 
-![截屏2021-09-03 下午12.58.59](C:\Users\lenovo\Desktop\bert_acceleration\figs\2.png)
+![2](./figs/2.png)
 
 The process of calculating the attention fraction initially introduced is first represented by the following equation:
 
@@ -136,7 +136,7 @@ The mask operation M(-) of the sparse attention calculation is implemented on th
 
 We combine the thresholds of each row in series to form a vector $t = [t1, t2, ..., t_{lenQ} ]$, and  mask function $M(-, -)$ can be expressed as
 
-<img src="C:\Users\lenovo\Desktop\bert_acceleration\figs\3.png" alt="截屏2021-09-03 下午12.58.59" style="zoom:67%;" />
+<img src="./figs/3.png" alt="截屏2021-09-03 下午12.58.59" style="zoom:67%;" />
 
 This explicit choice of the first k most relevant keys not only preserves the important information, but also simplifies the model, since the hyperparameter k are taken to be smaller values, such as 4, 8, 16, etc. The selection of the first k large elements is followed by the normalization operation of $Softmax$. Since the positions smaller than the k-th maximum are masked (mask) by the function M(-, -) to negative infinity, their normalized weight values, i.e., the probability of similarity, are approximately 0.
 
@@ -147,5 +147,5 @@ expect to further improve the efficiency of the model computation.
 
 The quantization part is applied to the process of finding the k keys that are most similar to the query words, specifically, the 32-bit floating-point representation of the query matrix and the key matrix are mapped to the 8-bit representation by quantization, and the similarity matrix result is calculated by 8-bit multiplication to find the k keys that are most similar to each query, and return to perform the sparse matrix calculation to obtain the sparse attention score matrix . The process of sparse quantitative attention computation can be represented in Figure.
 
-![截屏2021-09-03 下午12.58.59](C:\Users\lenovo\Desktop\bert_acceleration\figs\4.png)
+![截屏2021-09-03 下午12.58.59](./figs/4.png)
 

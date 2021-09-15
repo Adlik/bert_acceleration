@@ -20,7 +20,7 @@ The **text-classification** folder contains the program code for testing. We hav
 
 Download pretrianed bert models from Google Drive: 
 
-https://drive.google.com/drive/folders/1MbDYOENvJGdmLKXAT4JBFoWCjDHzscOI?usp=sharing
+https://drive.google.com/drive/folders/1_-6qXSn29pxx7J_i7Hc6O4YT5ijfrT72?usp=sharing
 
 There are nine models and their corresponding profiles in this URL, corresponding to nine text classification tasks of GLUE.
 
